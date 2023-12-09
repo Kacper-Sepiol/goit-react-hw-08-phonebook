@@ -1,5 +1,23 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { fetchContactsThunk } from 'components/fetchContacts/FetchContacts';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { authReducer } from './auth/slice';
+
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['token'],
+};
 
 const contactsSlice = createSlice({
   name: 'contacts',
@@ -60,6 +78,7 @@ const contactsReducer = contactsSlice.reducer;
 
 export const store = configureStore({
   reducer: {
+    auth: persistReducer(authPersistConfig, authReducer),
     contacts: contactsReducer,
   },
 });
