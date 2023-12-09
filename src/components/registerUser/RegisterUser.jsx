@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { register } from '../../redux/auth/operations';
+import css from './RegisterUserStyle.module.css';
 
 const temporeryData = {};
 
@@ -18,10 +19,6 @@ export const RegisterUser = () => {
     temporeryData.email = email;
     temporeryData.password = password;
 
-    // dispatch(AddUser(name, email, password));
-
-    console.log(temporeryData);
-
     dispatch(register(temporeryData));
 
     delete temporeryData.name;
@@ -32,7 +29,7 @@ export const RegisterUser = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={css.loginForm}>
       <label>
         Name
         <input type="text" name="name" required />
@@ -46,7 +43,9 @@ export const RegisterUser = () => {
         <input type="password" name="password" required />
       </label>
 
-      <button type="submit">Send me!</button>
+      <button type="submit" className={css.buttonRegister}>
+        Register
+      </button>
     </form>
   );
 };
