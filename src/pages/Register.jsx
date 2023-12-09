@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet';
+import { RegisterUser } from 'components/registerUser/RegisterUser';
 
 const Register = () => {
   return (
@@ -6,7 +7,9 @@ const Register = () => {
       <Helmet>
         <title>Register</title>
       </Helmet>
-      {/* tutaj musi byc komponent logowania */}
+      <RegisterUser />
     </div>
   );
 };
+
+export default Register;

@@ -81,4 +81,13 @@ export const store = configureStore({
     auth: persistReducer(authPersistConfig, authReducer),
     contacts: contactsReducer,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+  devTools: process.env.NODE_ENV === 'development',
 });
+
+export const persistor = persistStore(store);

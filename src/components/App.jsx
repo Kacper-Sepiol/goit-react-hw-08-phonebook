@@ -2,7 +2,7 @@ import React from 'react';
 import ContactForm from './contactForm/ContactForm';
 import ContactList from './contactList/ContactList';
 import Filter from './filter/Filter';
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import {
@@ -14,6 +14,13 @@ import {
   deleteAllContactsForFilter,
   addFilterContact,
 } from '../redux/store';
+import { Routes, Route, Link, redirect } from 'react-router-dom';
+import { RestrictedRoute } from './RestrictedRoute/RestrictedRoute';
+import { PrivateRoute } from './privateRoute/PrivateRoute';
+
+// import stron
+const Register = lazy(() => import('../pages/Register'));
+const ContactPage = lazy(() => import('../pages/Contacts'));
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -25,64 +32,81 @@ export const App = () => {
     dispatch(fetchContactsThunk());
   }, [dispatch]);
 
-  const handleChangeFilterField = evt => {
-    const filterValue = evt.currentTarget.value.toLowerCase();
-    dispatch(addFilter(filterValue));
+  // const handleChangeFilterField = evt => {
+  //   const filterValue = evt.currentTarget.value.toLowerCase();
+  //   dispatch(addFilter(filterValue));
 
-    const filteredContacts = contact.filter(contact =>
-      contact.name.toLowerCase().includes(filterValue)
-    );
+  //   const filteredContacts = contact.filter(contact =>
+  //     contact.name.toLowerCase().includes(filterValue)
+  //   );
 
-    dispatch(deleteAllContactsForFilter());
+  //   dispatch(deleteAllContactsForFilter());
 
-    dispatch(addFilterContact(filteredContacts));
+  //   dispatch(addFilterContact(filteredContacts));
 
-    if (evt.currentTarget.value === '') {
-      dispatch(addFilterContact(allContacts));
-    }
-  };
+  //   if (evt.currentTarget.value === '') {
+  //     dispatch(addFilterContact(allContacts));
+  //   }
+  // };
 
-  const handleSubmit = event => {
-    event.preventDefault();
+  // const handleSubmit = event => {
+  //   event.preventDefault();
 
-    const data = {};
+  //   const data = {};
 
-    const form = event.target;
-    const name = form.elements.name.value;
-    const number = form.elements.number.value;
+  //   const form = event.target;
+  //   const name = form.elements.name.value;
+  //   const number = form.elements.number.value;
 
-    data.name = name;
-    data.phone = number;
+  //   data.name = name;
+  //   data.phone = number;
 
-    fetchContacts(data);
+  //   fetchContacts(data);
 
-    delete data.name;
-    delete data.phone;
+  //   delete data.name;
+  //   delete data.phone;
 
-    const nameExists = contact.some(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
+  //   const nameExists = contact.some(
+  //     contact => contact.name.toLowerCase() === name.toLowerCase()
+  //   );
 
-    if (nameExists) {
-      alert('ERROR');
-      return;
-    }
+  //   if (nameExists) {
+  //     alert('ERROR');
+  //     return;
+  //   }
 
-    form.reset();
-  };
+  //   form.reset();
+  // };
 
   return (
     <div>
-      <h1>PhoneBook</h1>
-      <ContactForm handleSubmit={handleSubmit}></ContactForm>
+      <nav>
+        <Link to="register">Rejestracja</Link>
+      </nav>
 
-      <h2>Contacts</h2>
-      <Filter
-        filter={filter}
-        handleChangeFilterField={handleChangeFilterField}
-      ></Filter>
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <Routes>
+          <Route
+            path="/register"
+            element={
+              <RestrictedRoute
+                redirectTo="/contacts"
+                component={<Register />}
+              />
+            }
+          />
 
-      <ContactList></ContactList>
+          <Route
+            path="/contacts"
+            element={
+              <PrivateRoute
+                redirectTo="/register"
+                component={<ContactPage />}
+              />
+            }
+          />
+        </Routes>
+      </Suspense>
     </div>
   );
 };
